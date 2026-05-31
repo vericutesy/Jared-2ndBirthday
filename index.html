@@ -2029,16 +2029,17 @@ drawBubbles();
 
 /* ─── FIXED SWIMMING SHARK ─────────────── */
 (function() {
-  const shark   = document.getElementById('ty-fixed-shark');
+  const shark     = document.getElementById('ty-fixed-shark');
   const tySection = document.getElementById('thankyou');
-  const sharkW  = 200;
-  let x         = -sharkW;
-  let raf       = null;
-  let visible   = false;
+  const sharkW    = 200;
+  let x           = -sharkW;
+  let raf         = null;
+  let visible     = false;
+  let observing   = false;
 
   function speed() { return window.innerWidth / 260; }
   let tick = 0;
-  function bob()  { return Math.sin(tick * 0.045) * 12; }
+  function bob() { return Math.sin(tick * 0.045) * 12; }
 
   function step() {
     if (!visible) return;
@@ -2059,21 +2060,44 @@ drawBubbles();
   }
 
   function hide() {
+    if (!visible) return;
     visible = false;
     shark.style.display = 'none';
     if (raf) { cancelAnimationFrame(raf); raf = null; }
   }
 
-  // IntersectionObserver watches #thankyou — show shark only while it's on screen
-  const obs = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) { show(); } else { hide(); }
-    });
-  }, { threshold: 0.15 });
+  // Check if #thankyou is actually visible in the viewport right now
+  function isTyVisible() {
+    var r = tySection.getBoundingClientRect();
+    // Section must overlap the viewport (any part of it is on screen)
+    return r.bottom > 0 && r.top < window.innerHeight;
+  }
 
-  // Start observing after the dive-in transition reveals #main
+  function checkVisibility() {
+    if (isTyVisible()) { show(); } else { hide(); }
+  }
+
+  function startObserving() {
+    if (observing) return;
+    observing = true;
+
+    // IntersectionObserver — fires when section enters/leaves viewport
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { show(); } else { hide(); }
+      });
+    }, { threshold: 0 }); // threshold:0 = fires the instant ANY pixel enters/leaves
+    obs.observe(tySection);
+
+    // Scroll listener as instant backup — hides shark the moment you scroll away
+    var scrollEl = document.getElementById('main') || window;
+    scrollEl.addEventListener('scroll', checkVisibility, { passive: true });
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+  }
+
+  // Start only after the dive-in transition completes
   document.getElementById('dive-btn').addEventListener('click', function() {
-    setTimeout(function() { obs.observe(tySection); }, 1200);
+    setTimeout(startObserving, 1200);
   });
 })();
 
