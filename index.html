@@ -768,12 +768,13 @@ body.locked { overflow: hidden; height: 100vh; }
 /* The shark lives in a fixed overlay, never affects layout */
 #ty-fixed-shark {
   position: fixed;
-  bottom: 80px;
+  bottom: 90px;
   left: 0;
-  z-index: 500;
+  z-index: 499;
   pointer-events: none;
   will-change: transform;
   display: none;
+  /* transform is set by JS — only X and bob Y change, bottom stays fixed */
 }
 /* Fin wave animation */
 .ty-swim-fin {
@@ -1137,7 +1138,7 @@ footer {
       <p class="section-sub reveal" style="transition-delay:0.18s">Everything you need to know about the big day.</p>
       <div class="details-grid">
         <div class="glass detail-card reveal" style="transition-delay:0.1s">
-          <span class="card-icon">🗓️</span>
+          <span class="card-icon">📅</span>
           <div class="card-label">Date</div>
           <div class="card-value">June 6, 2026</div>
           <div class="card-sub">Saturday</div>
@@ -2024,63 +2025,56 @@ document.head.appendChild(ks);
 
 drawBubbles();
 
-/* ─── FIXED SWIMMING SHARK ────────────────
-   Uses window.innerWidth so it always swims
-   the full real screen — phone, tablet, PC.
-   position:fixed means it never causes scroll.
-─────────────────────────────────────────── */
+drawBubbles();
+
+/* ─── FIXED SWIMMING SHARK ─────────────── */
 (function() {
-  const shark = document.getElementById('ty-fixed-shark');
-  const sharkW = 200; // SVG width in px
-  let x = -sharkW;
-  let raf;
-  let active = false;
+  const shark   = document.getElementById('ty-fixed-shark');
+  const tySection = document.getElementById('thankyou');
+  const sharkW  = 200;
+  let x         = -sharkW;
+  let raf       = null;
+  let visible   = false;
 
-  // Speed in px/frame — scales with screen width so it feels the same on all devices
-  function speed() { return window.innerWidth / 280; }
-
-  // Gentle vertical bob
+  function speed() { return window.innerWidth / 260; }
   let tick = 0;
-  function bob() { return Math.sin(tick * 0.04) * 14; }
+  function bob()  { return Math.sin(tick * 0.045) * 12; }
 
   function step() {
+    if (!visible) return;
     tick++;
     x += speed();
-    // Once fully off-screen right, restart from left
     if (x > window.innerWidth + sharkW) x = -sharkW;
-    shark.style.transform = `translateX(${x}px) translateY(${bob()}px)`;
+    shark.style.transform = 'translateX(' + x + 'px) translateY(' + bob() + 'px)';
     raf = requestAnimationFrame(step);
   }
 
-  function startShark() {
-    if (active) return;
-    active = true;
-    shark.style.display = 'block';
+  function show() {
+    if (visible) return;
+    visible = true;
     x = -sharkW;
+    tick = 0;
+    shark.style.display = 'block';
     raf = requestAnimationFrame(step);
   }
 
-  function stopShark() {
-    active = false;
+  function hide() {
+    visible = false;
     shark.style.display = 'none';
-    cancelAnimationFrame(raf);
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
   }
 
-  // Show shark only when #thankyou section is visible
-  const tySection = document.getElementById('thankyou');
-  const tyObs = new IntersectionObserver(entries => {
-    entries.forEach(e => e.isIntersecting ? startShark() : stopShark());
-  }, { threshold: 0.1 });
+  // IntersectionObserver watches #thankyou — show shark only while it's on screen
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { show(); } else { hide(); }
+    });
+  }, { threshold: 0.15 });
 
-  // Wait until main site is revealed before observing
-  const mainEl2 = document.getElementById('main');
-  const mainObs = new MutationObserver(() => {
-    if (mainEl2.style.display !== 'none') {
-      tyObs.observe(tySection);
-      mainObs.disconnect();
-    }
+  // Start observing after the dive-in transition reveals #main
+  document.getElementById('dive-btn').addEventListener('click', function() {
+    setTimeout(function() { obs.observe(tySection); }, 1200);
   });
-  mainObs.observe(mainEl2, { attributes: true, attributeFilter: ['style'] });
 })();
 
 /* ─── MAIN INIT ───────────────────────── */
