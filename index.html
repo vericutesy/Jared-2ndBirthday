@@ -527,26 +527,27 @@ body.locked { overflow: hidden; height: 100vh; }
 }
 .countdown-flex {
   display: flex; align-items: center; justify-content: center;
-  gap: 10px; flex-wrap: wrap;
+  gap: clamp(4px, 1.5vw, 10px); flex-wrap: nowrap;
+  width: 100%; overflow: hidden;
 }
 .cd-card {
   text-align: center;
-  padding: 28px 32px;
+  padding: clamp(14px, 3vw, 28px) clamp(10px, 3vw, 32px);
   border-radius: 20px;
-  min-width: 100px;
+  min-width: 0; flex: 1 1 0;
 }
 .cd-num {
   font-family: 'Pacifico', cursive;
-  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-size: clamp(1.6rem, 6vw, 5rem);
   line-height: 1;
   color: var(--gold);
   text-shadow: 0 0 30px rgba(255,209,102,0.6);
   display: block;
 }
 .cd-label {
-  font-size: 0.68rem;
+  font-size: clamp(0.5rem, 1.5vw, 0.68rem);
   font-weight: 800;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--light);
   margin-top: 8px;
@@ -554,9 +555,10 @@ body.locked { overflow: hidden; height: 100vh; }
 }
 .cd-sep {
   font-family: 'Pacifico', cursive;
-  font-size: 3rem;
+  font-size: clamp(1.4rem, 4vw, 3rem);
   color: var(--aqua);
-  padding-bottom: 30px;
+  padding-bottom: clamp(16px, 4vw, 30px);
+  flex-shrink: 0;
   animation: sepBlink 1s ease-in-out infinite;
 }
 @keyframes sepBlink {
@@ -712,13 +714,15 @@ body.locked { overflow: hidden; height: 100vh; }
   text-align: center;
   padding: 100px 24px 60px;
   position: relative;
-  overflow: visible;   /* must be visible so the 100vw shark strip can bleed out */
+  overflow: hidden;
   background: linear-gradient(180deg, transparent, rgba(0,80,140,0.3));
   z-index: 2;
 }
 .ty-shark-row {
   display: flex; gap: 40px; justify-content: center;
   margin-bottom: 40px; flex-wrap: wrap;
+  width: 100%;
+  padding: 0 16px;
 }
 .ty-shark { animation: tySharkWave ease-in-out infinite; }
 .ty-shark:nth-child(2) { animation-delay: 0.5s; animation-direction: reverse; }
@@ -748,15 +752,11 @@ body.locked { overflow: hidden; height: 100vh; }
    THANK YOU SWIMMING SHARK
 ───────────────────────────────────────── */
 .ty-swim-scene {
-  /* Stretch fully across the viewport, break out of any centered container */
   position: relative;
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 100%;
   height: 200px;
   margin: 30px 0 0;
-  /* NO overflow:hidden — shark must be visible outside container bounds */
-  overflow: visible;
+  overflow: hidden;
   pointer-events: none;
 }
 .ty-swim-shark-wrap {
@@ -953,8 +953,8 @@ footer {
    RESPONSIVE
 ───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .cd-card { min-width: 72px; padding: 20px 18px; }
-  .cd-sep { font-size: 2rem; padding-bottom: 20px; }
+  .cd-card { min-width: 0; padding: clamp(12px, 3vw, 20px) clamp(8px, 2.5vw, 18px); }
+  .cd-sep { font-size: clamp(1.2rem, 4vw, 2rem); padding-bottom: clamp(14px, 3vw, 20px); }
   .dive-btn { padding: 15px 36px; }
 }
 </style>
