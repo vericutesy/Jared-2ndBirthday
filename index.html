@@ -437,8 +437,7 @@ body.locked { overflow: hidden; height: 100vh; }
 .hero-sharks {
   position: absolute; inset: 0;
   pointer-events: none; overflow: hidden;
-}
-.hero-shark {
+}.hero-shark {
   position: absolute;
   animation: heroSharkSwim linear infinite;
   filter: drop-shadow(0 6px 18px rgba(0,0,0,0.4));
@@ -527,27 +526,27 @@ body.locked { overflow: hidden; height: 100vh; }
 }
 .countdown-flex {
   display: flex; align-items: center; justify-content: center;
-  gap: clamp(4px, 1.5vw, 10px); flex-wrap: nowrap;
-  width: 100%; overflow: hidden;
+  gap: 10px; flex-wrap: nowrap;
+  width: 100%; padding: 0 16px;
 }
 .cd-card {
   text-align: center;
-  padding: clamp(14px, 3vw, 28px) clamp(10px, 3vw, 32px);
+  padding: 28px 32px;
   border-radius: 20px;
   min-width: 0; flex: 1 1 0;
 }
 .cd-num {
   font-family: 'Pacifico', cursive;
-  font-size: clamp(1.6rem, 6vw, 5rem);
+  font-size: clamp(2rem, 5vw, 5rem);
   line-height: 1;
   color: var(--gold);
   text-shadow: 0 0 30px rgba(255,209,102,0.6);
   display: block;
 }
 .cd-label {
-  font-size: clamp(0.5rem, 1.5vw, 0.68rem);
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--light);
   margin-top: 8px;
@@ -555,9 +554,9 @@ body.locked { overflow: hidden; height: 100vh; }
 }
 .cd-sep {
   font-family: 'Pacifico', cursive;
-  font-size: clamp(1.4rem, 4vw, 3rem);
+  font-size: 3rem;
   color: var(--aqua);
-  padding-bottom: clamp(16px, 4vw, 30px);
+  padding-bottom: 30px;
   flex-shrink: 0;
   animation: sepBlink 1s ease-in-out infinite;
 }
@@ -953,16 +952,45 @@ footer {
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
 @media (max-width: 600px) {
-  .cd-card { min-width: 0; padding: clamp(12px, 3vw, 20px) clamp(8px, 2.5vw, 18px); }
-  .cd-sep { font-size: clamp(1.2rem, 4vw, 2rem); padding-bottom: clamp(14px, 3vw, 20px); }
+  /* Countdown — force single row, everything scales down */
+  .countdown-flex {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  .cd-card {
+    padding: 10px 6px;
+    border-radius: 12px;
+    min-width: 0;
+    flex: 1 1 0;
+  }
+  .cd-num {
+    font-size: 1.5rem;
+  }
+  .cd-label {
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  .cd-sep {
+    font-size: 1.2rem;
+    padding-bottom: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Dive button */
   .dive-btn { padding: 15px 36px; }
+
+  /* Music player — compact, no text label */
   #music-player {
     bottom: 12px; right: 12px;
-    padding: 8px 14px; gap: 8px;
+    padding: 8px 12px; gap: 8px;
   }
   .mp-label { display: none; }
-  input.vol { width: 48px; }
+  input.vol { width: 44px; }
 }
 </style>
 </head>
@@ -1148,7 +1176,7 @@ footer {
 
   <!-- ── COUNTDOWN ─────────────────────── -->
   <div class="section-full countdown-band">
-    <div class="section-inner" style="padding:80px 0">
+    <div class="section-inner" style="padding:80px 16px">
       <p class="section-label reveal" style="text-align:center">Counting Down To</p>
       <h2 class="section-title reveal" style="text-align:center;transition-delay:0.1s;margin-bottom:48px">The Big Day</h2>
       <div class="countdown-flex reveal" style="transition-delay:0.2s">
